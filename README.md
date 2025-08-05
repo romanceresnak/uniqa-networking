@@ -18,20 +18,7 @@ This module creates the networking infrastructure for Azure applications, includ
 
 This module creates the following architecture:
 
-┌─────────────────────────────────────────────────────────────┐
-│ Virtual Network (VNet) │
-├─────────────────┬─────────────────┬────────────────────────┤
-│ Frontend Subnet │ API Subnet │ Database Subnet │
-│ NSG: Allow 443 │ NSG: Allow 443 │ NSG: Allow 5432 │
-│ from Front Door │ from Frontend │ from API Subnet │
-└─────────────────┴─────────────────┴────────────────────────┘
-│
-Private DNS Zones
-┌─────────────────┼─────────────────┐
-│ │ │
-PostgreSQL App Services Key Vault
-
-pgsql
+![Logo](https://github.com/romanceresnak/uniqa-networking/blob/main/architecture.png)
 
 
 ## Usage

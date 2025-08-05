@@ -2,7 +2,7 @@
 
 This module creates the networking infrastructure for Azure applications, including Virtual Networks, subnets, Network Security Groups, and private DNS zones.
 
-## ✅ Features
+## Features
 
 - Virtual Network with configurable address space  
 - Multiple subnets with service endpoints  
@@ -32,14 +32,13 @@ Private DNS Zones
 PostgreSQL App Services Key Vault
 
 pgsql
-Copy
-Edit
 
-## 🚀 Usage
+
+## Usage
 
 ### Basic Example
 
-```hcl
+```
 module "networking" {
   source = "git::https://gitlab.com/your-org/terraform-module-azure-networking.git?ref=v1.0.0"
 
@@ -70,90 +69,84 @@ module "networking" {
     CostCenter = "IT"
   }
 }
-📦 Requirements
+```
+
+## Requirements
 Name	Version
 terraform	>= 1.0
+
 azurerm	>= 3.0, < 4.0
 
-🔌 Providers
+## Providers
 Name	Version
+
 azurerm	>= 3.0, < 4.0
 
-📥 Inputs
-Name	Description	Type	Default	Required
-resource_group_name	The name of the resource group	string	n/a	✅
-location	Azure region for resources	string	n/a	✅
-environment	Environment name (dev, staging, prod)	string	n/a	✅
-project_name	Project name for resource naming	string	n/a	✅
-vnet_address_space	Address space for the virtual network	list(string)	n/a	✅
-subnets	Map of subnet configurations	map(object)	n/a	✅
-create_private_dns_zone_postgres	Create private DNS zone for PostgreSQL	bool	true	❌
-create_private_dns_zone_app_services	Create private DNS zone for App Services	bool	true	❌
-create_private_dns_zone_key_vault	Create private DNS zone for Key Vault	bool	true	❌
-create_nat_gateway	Create NAT Gateway for outbound connectivity	bool	false	❌
-tags	Common tags to apply to all resources	map(string)	{}	❌
+## Inputs
+| Name                                      | Description                                  | Type           | Default | Required |
+| ----------------------------------------- | -------------------------------------------- | -------------- | ------- | -------- |
+| resource\_group\_name                     | The name of the resource group               | `string`       | n/a     | ✅        |
+| location                                  | Azure region for resources                   | `string`       | n/a     | ✅        |
+| environment                               | Environment name (dev, staging, prod)        | `string`       | n/a     | ✅        |
+| project\_name                             | Project name for resource naming             | `string`       | n/a     | ✅        |
+| vnet\_address\_space                      | Address space for the virtual network        | `list(string)` | n/a     | ✅        |
+| subnets                                   | Map of subnet configurations                 | `map(object)`  | n/a     | ✅        |
+| create\_private\_dns\_zone\_postgres      | Create private DNS zone for PostgreSQL       | `bool`         | `true`  | ❌        |
+| create\_private\_dns\_zone\_app\_services | Create private DNS zone for App Services     | `bool`         | `true`  | ❌        |
+| create\_private\_dns\_zone\_key\_vault    | Create private DNS zone for Key Vault        | `bool`         | `true`  | ❌        |
+| create\_nat\_gateway                      | Create NAT Gateway for outbound connectivity | `bool`         | `false` | ❌        |
+| tags                                      | Common tags to apply to all resources        | `map(string)`  | `{}`    | ❌        |
 
-📤 Outputs
-Name	Description
-vnet_id	The ID of the Virtual Network
-vnet_name	The name of the Virtual Network
-vnet_address_space	The address space of the Virtual Network
-subnet_ids	Map of subnet names to their IDs
-subnet_names	Map of subnet names
-subnet_address_prefixes	Map of subnet names to their address prefixes
-nsg_ids	Map of Network Security Group IDs
-nsg_names	Map of Network Security Group names
-private_dns_zone_postgres_id	The ID of the private DNS zone for PostgreSQL
-private_dns_zone_postgres_name	The name of the private DNS zone for PostgreSQL
-private_dns_zone_app_services_id	The ID of the private DNS zone for App Services
-private_dns_zone_app_services_name	The name of the private DNS zone for App Services
-private_dns_zone_key_vault_id	The ID of the private DNS zone for Key Vault
-private_dns_zone_key_vault_name	The name of the private DNS zone for Key Vault
-nat_gateway_id	The ID of the NAT Gateway
-nat_gateway_public_ip	The public IP address of the NAT Gateway
 
-🔐 Network Security Rules
+## Outputs
+| Name                                    | Description                                       |
+| --------------------------------------- | ------------------------------------------------- |
+| vnet\_id                                | The ID of the Virtual Network                     |
+| vnet\_name                              | The name of the Virtual Network                   |
+| vnet\_address\_space                    | The address space of the Virtual Network          |
+| subnet\_ids                             | Map of subnet names to their IDs                  |
+| subnet\_names                           | Map of subnet names                               |
+| subnet\_address\_prefixes               | Map of subnet names to their address prefixes     |
+| nsg\_ids                                | Map of Network Security Group IDs                 |
+| nsg\_names                              | Map of Network Security Group names               |
+| private\_dns\_zone\_postgres\_id        | The ID of the private DNS zone for PostgreSQL     |
+| private\_dns\_zone\_postgres\_name      | The name of the private DNS zone for PostgreSQL   |
+| private\_dns\_zone\_app\_services\_id   | The ID of the private DNS zone for App Services   |
+| private\_dns\_zone\_app\_services\_name | The name of the private DNS zone for App Services |
+| private\_dns\_zone\_key\_vault\_id      | The ID of the private DNS zone for Key Vault      |
+| private\_dns\_zone\_key\_vault\_name    | The name of the private DNS zone for Key Vault    |
+| nat\_gateway\_id                        | The ID of the NAT Gateway                         |
+| nat\_gateway\_public\_ip                | The public IP address of the NAT Gateway          |
+
+
+## Network Security Rules
 The module automatically creates the following NSG rules:
 
 Frontend Subnet
-AllowHTTPS: Allows HTTPS (443) from Azure Front Door
-
-AllowHTTP: Allows HTTP (80) from Azure Front Door
-
-DenyAllInbound: Denies all other inbound traffic
+- AllowHTTPS: Allows HTTPS (443) from Azure Front Door
+- AllowHTTP: Allows HTTP (80) from Azure Front Door
+- DenyAllInbound: Denies all other inbound traffic
 
 API Subnet
-AllowAppServices: Allows HTTPS (443) from Frontend subnet
-
-AllowHTTP: Allows HTTP (8080) from Frontend subnet
-
-DenyAllInbound: Denies all other inbound traffic
+- AllowAppServices: Allows HTTPS (443) from Frontend subnet
+- AllowHTTP: Allows HTTP (8080) from Frontend subnet
+- DenyAllInbound: Denies all other inbound traffic
 
 Database Subnet
-AllowPostgreSQL: Allows PostgreSQL (5432) from API subnet
+- AllowPostgreSQL: Allows PostgreSQL (5432) from API subnet
+- DenyAllInbound: Denies all other inbound traffic
 
-DenyAllInbound: Denies all other inbound traffic
-
-📛 Resource Naming Convention
+## Resource Naming Convention
 All resources follow Azure naming best practices:
+- Virtual Network: vnet-{project_name}-{environment}-{location}
+- Subnet: snet-{project_name}-{subnet_key}-{environment}
+- NSG: nsg-{project_name}-{subnet_key}-{environment}
+- Private DNS Zone: Standard Azure private DNS zone names
+- NAT Gateway: natgw-{project_name}-{environment}
 
-Virtual Network: vnet-{project_name}-{environment}-{location}
-
-Subnet: snet-{project_name}-{subnet_key}-{environment}
-
-NSG: nsg-{project_name}-{subnet_key}-{environment}
-
-Private DNS Zone: Standard Azure private DNS zone names
-
-NAT Gateway: natgw-{project_name}-{environment}
-
-🔒 Security Considerations
-Network Security Groups implement a zero-trust approach with explicit allow rules
-
-Default deny-all inbound rule on all subnets
-
-Service endpoints enabled for Azure PaaS services
-
-Private DNS zones for private endpoint connectivity
-
-Subnet delegation support for Azure services
+## Security Considerations
+- Network Security Groups implement a zero-trust approach with explicit allow rules
+- Default deny-all inbound rule on all subnets
+- Service endpoints enabled for Azure PaaS services
+- Private DNS zones for private endpoint connectivity
+- Subnet delegation support for Azure services

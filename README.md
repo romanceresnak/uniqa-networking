@@ -14,11 +14,26 @@ This module creates the networking infrastructure for Azure applications, includ
 - Comprehensive tagging strategy  
 - NSG rules tailored for web applications architecture  
 
-## Architecture
+## 🏗️ Architecture
 
 This module creates the following architecture:
 
+┌─────────────────────────────────────────────────────────────┐
+│ Virtual Network (VNet) │
+├─────────────────┬─────────────────┬────────────────────────┤
+│ Frontend Subnet │ API Subnet │ Database Subnet │
+│ NSG: Allow 443 │ NSG: Allow 443 │ NSG: Allow 5432 │
+│ from Front Door │ from Frontend │ from API Subnet │
+└─────────────────┴─────────────────┴────────────────────────┘
+│
+Private DNS Zones
+┌─────────────────┼─────────────────┐
+│ │ │
+PostgreSQL App Services Key Vault
 
+pgsql
+Copy
+Edit
 
 ## 🚀 Usage
 
@@ -55,52 +70,47 @@ module "networking" {
     CostCenter = "IT"
   }
 }
-
 📦 Requirements
-| Name      | Version       |
-| --------- | ------------- |
-| terraform | >= 1.0        |
-| azurerm   | >= 3.0, < 4.0 |
+Name	Version
+terraform	>= 1.0
+azurerm	>= 3.0, < 4.0
 
 🔌 Providers
-| Name    | Version       |
-| ------- | ------------- |
-| azurerm | >= 3.0, < 4.0 |
+Name	Version
+azurerm	>= 3.0, < 4.0
 
-Inputs
-| Name                                      | Description                                  | Type           | Default | Required |
-| ----------------------------------------- | -------------------------------------------- | -------------- | ------- | -------- |
-| resource\_group\_name                     | The name of the resource group               | `string`       | n/a     | ✅        |
-| location                                  | Azure region for resources                   | `string`       | n/a     | ✅        |
-| environment                               | Environment name (dev, staging, prod)        | `string`       | n/a     | ✅        |
-| project\_name                             | Project name for resource naming             | `string`       | n/a     | ✅        |
-| vnet\_address\_space                      | Address space for the virtual network        | `list(string)` | n/a     | ✅        |
-| subnets                                   | Map of subnet configurations                 | `map(object)`  | n/a     | ✅        |
-| create\_private\_dns\_zone\_postgres      | Create private DNS zone for PostgreSQL       | `bool`         | `true`  | ❌        |
-| create\_private\_dns\_zone\_app\_services | Create private DNS zone for App Services     | `bool`         | `true`  | ❌        |
-| create\_private\_dns\_zone\_key\_vault    | Create private DNS zone for Key Vault        | `bool`         | `true`  | ❌        |
-| create\_nat\_gateway                      | Create NAT Gateway for outbound connectivity | `bool`         | `false` | ❌        |
-| tags                                      | Common tags to apply to all resources        | `map(string)`  | `{}`    | ❌        |
+📥 Inputs
+Name	Description	Type	Default	Required
+resource_group_name	The name of the resource group	string	n/a	✅
+location	Azure region for resources	string	n/a	✅
+environment	Environment name (dev, staging, prod)	string	n/a	✅
+project_name	Project name for resource naming	string	n/a	✅
+vnet_address_space	Address space for the virtual network	list(string)	n/a	✅
+subnets	Map of subnet configurations	map(object)	n/a	✅
+create_private_dns_zone_postgres	Create private DNS zone for PostgreSQL	bool	true	❌
+create_private_dns_zone_app_services	Create private DNS zone for App Services	bool	true	❌
+create_private_dns_zone_key_vault	Create private DNS zone for Key Vault	bool	true	❌
+create_nat_gateway	Create NAT Gateway for outbound connectivity	bool	false	❌
+tags	Common tags to apply to all resources	map(string)	{}	❌
 
-Outputs
-| Name                                    | Description                                       |
-| --------------------------------------- | ------------------------------------------------- |
-| vnet\_id                                | The ID of the Virtual Network                     |
-| vnet\_name                              | The name of the Virtual Network                   |
-| vnet\_address\_space                    | The address space of the Virtual Network          |
-| subnet\_ids                             | Map of subnet names to their IDs                  |
-| subnet\_names                           | Map of subnet names                               |
-| subnet\_address\_prefixes               | Map of subnet names to their address prefixes     |
-| nsg\_ids                                | Map of Network Security Group IDs                 |
-| nsg\_names                              | Map of Network Security Group names               |
-| private\_dns\_zone\_postgres\_id        | The ID of the private DNS zone for PostgreSQL     |
-| private\_dns\_zone\_postgres\_name      | The name of the private DNS zone for PostgreSQL   |
-| private\_dns\_zone\_app\_services\_id   | The ID of the private DNS zone for App Services   |
-| private\_dns\_zone\_app\_services\_name | The name of the private DNS zone for App Services |
-| private\_dns\_zone\_key\_vault\_id      | The ID of the private DNS zone for Key Vault      |
-| private\_dns\_zone\_key\_vault\_name    | The name of the private DNS zone for Key Vault    |
-| nat\_gateway\_id                        | The ID of the NAT Gateway                         |
-| nat\_gateway\_public\_ip                | The public IP address of the NAT Gateway          |
+📤 Outputs
+Name	Description
+vnet_id	The ID of the Virtual Network
+vnet_name	The name of the Virtual Network
+vnet_address_space	The address space of the Virtual Network
+subnet_ids	Map of subnet names to their IDs
+subnet_names	Map of subnet names
+subnet_address_prefixes	Map of subnet names to their address prefixes
+nsg_ids	Map of Network Security Group IDs
+nsg_names	Map of Network Security Group names
+private_dns_zone_postgres_id	The ID of the private DNS zone for PostgreSQL
+private_dns_zone_postgres_name	The name of the private DNS zone for PostgreSQL
+private_dns_zone_app_services_id	The ID of the private DNS zone for App Services
+private_dns_zone_app_services_name	The name of the private DNS zone for App Services
+private_dns_zone_key_vault_id	The ID of the private DNS zone for Key Vault
+private_dns_zone_key_vault_name	The name of the private DNS zone for Key Vault
+nat_gateway_id	The ID of the NAT Gateway
+nat_gateway_public_ip	The public IP address of the NAT Gateway
 
 🔐 Network Security Rules
 The module automatically creates the following NSG rules:
